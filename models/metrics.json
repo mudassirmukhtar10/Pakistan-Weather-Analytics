@@ -1,0 +1,20 @@
+[
+  {
+    "model": "Naive Persistence",
+    "MAE": 3.4737,
+    "RMSE": 4.5427,
+    "R2": -0.0493
+  },
+  {
+    "model": "Ridge Regression",
+    "MAE": 0.316,
+    "RMSE": 0.461,
+    "R2": 0.9892
+  },
+  {
+    "model": "GradientBoosting",
+    "MAE": 0.317,
+    "RMSE": 0.4702,
+    "R2": 0.9888
+  }
+]

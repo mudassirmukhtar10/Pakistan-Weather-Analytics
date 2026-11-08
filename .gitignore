@@ -1,0 +1,35 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Python cache & compiled bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Large ML model artifacts (exclude binaries, retain evaluation metrics)
+models/*.joblib
+!models/metrics.json
+
+# Generated Reports (exclude auto-generated runs, retain sample template)
+reports/*.md
+!reports/sample_weather_briefing.md
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Testing cache
+.pytest_cache/
+
+# OS & IDE artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
