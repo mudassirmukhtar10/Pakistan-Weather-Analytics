@@ -53,43 +53,43 @@ This project delivers an **end-to-end meteorological intelligence platform** bui
 ```mermaid
 flowchart TD
     subgraph RAW["📂 Raw Data Sources"]
-        CSV["Open-Meteo API Exports\nCity CSVs: Islamabad, Karachi\nLahore, Peshawer\n(16,152 hourly records each)"]
+        CSV["Open-Meteo API Exports\nCity CSVs: Islamabad, Karachi\nLahore, Peshawar\n(16,152 hourly records each)"]
     end
 
-    subgraph ETL["🔧 ETL & Ingestion Layer"]
+    subgraph ETL["🔧 ETL & Processing Layer"]
         CLEAN["src/clean_data.py\n• Strip metadata headers\n• Coerce numeric columns\n• Validate city coordinates\n• Drop duplicates & nulls"]
-        DB[("MySQL Database\nPort 3307 : weather_db\n64,608 clean hourly rows\n⚠️ Port 3306 never touched")]
-        CSV --> CLEAN --> DB
+        STORE["weather_data.csv\nOptimized Cloud-Ready Dataset\n(64,608 clean hourly rows)"]
+        CSV --> CLEAN --> STORE
     end
 
     subgraph ML["🤖 Machine Learning Engine"]
-        FEAT["Feature Engineering\nsrc/train_model.py\n• Lag features: t-1h, t-2h, t-24h, t-48h, t-168h\n• Rolling mean & std: 6h, 24h, 168h\n• Cyclical encoding: hour, month, day-of-year\n• City one-hot encoding"]
-        SPLIT["Chronological 80/20 Split\nTrain → up to Jun 24 2026\nTest  → Jun 24 to Nov 04 2026\n12,788 test-set rows | 0 leakage"]
-        MODELS["Trained Models\n├─ Naive Baseline    MAE: 3.47°C  R²: -0.05\n├─ Gradient Boosting MAE: 0.317°C R²: 0.989\n└─ Ridge Regression  MAE: 0.316°C R²: 0.989 ✓"]
+        FEAT["Feature Engineering\nsrc/train_model.py\n• Lag features & rolling stats\n• Cyclical encoding & One-Hot"]
+        SPLIT["Chronological 80/20 Split\n12,788 test-set rows | 0 leakage"]
+        MODELS["Trained Models\n├─ Naive Baseline    MAE: 3.47°C\n├─ Gradient Boosting MAE: 0.317°C\n└─ Ridge Regression  MAE: 0.316°C ✓"]
         FEAT --> SPLIT --> MODELS
     end
 
     subgraph AGENT["🧠 LLM Agentic Briefing"]
-        TOOLS["Safe Read-Only Python Tools\n• get_city_summary(city, start, end)\n• compare_cities(metric)\n• detect_anomalies(city, window)\n• get_trend(city, metric, period)\n• get_forecast(city, horizon)"]
-        LOOP["Agent Loop\nOpenAI GPT-4o-mini\nAnthropic Claude 3.5\nOllama local LLM\n──── or ────\nOffline Template Engine"]
-        REPORT["reports/weather_briefing_YYYY-MM-DD.md\n6-section Markdown briefing"]
+        TOOLS["Safe Read-Only Python Tools\n• get_city_summary() · compare_cities()\n• detect_anomalies() · get_forecast()"]
+        LOOP["Agent Briefing Engine\nGPT-4o-mini / Claude / Local LLM"]
+        REPORT["Markdown Weather Reports\n6-section structured briefing"]
         TOOLS --> LOOP --> REPORT
     end
 
-    subgraph UI["📊 Streamlit Dashboard (src/app.py)"]
-        TAB1["📊 Overview & Map\nKPI cards · Geospatial pins · Data table"]
-        TAB2["📈 Comparative Analysis\nBoxplots · Bar charts · Monthly trends"]
-        TAB3["🔮 Temperature Forecast\nHistory + ML forecast chart · Daily table"]
-        TAB4["🤖 AI Weather Briefing\nGenerate · Preview · Download .md"]
+    subgraph UI["📊 Streamlit Cloud Dashboard (src/app.py)"]
+        TAB1["📊 Overview & Map\nKPI cards · Geospatial pins"]
+        TAB2["📈 Comparative Analysis\nBoxplots · Trends"]
+        TAB3["🔮 Temperature Forecast\nHistory + ML forecast chart"]
+        TAB4["🤖 AI Weather Briefing\nGenerate & Preview .md"]
     end
 
-    DB --> ML
-    DB --> AGENT
+    STORE --> ML
+    STORE --> AGENT
     MODELS --> TOOLS
     MODELS --> TAB3
     REPORT --> TAB4
-    DB --> TAB1
-    DB --> TAB2
+    STORE --> TAB1
+    STORE --> TAB2
 ```
 
 ---
