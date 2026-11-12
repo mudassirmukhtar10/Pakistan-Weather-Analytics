@@ -1,3 +1,5 @@
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mudassirmukhtar10-pakistan-weather-analytics-srcapp-3byqhb.streamlit.app/)
+
 # 🇵🇰 Pakistan Weather & Geospatial Analytics Suite
 
 <div align="center">
