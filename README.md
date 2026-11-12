@@ -35,19 +35,14 @@ This project delivers an **end-to-end meteorological intelligence platform** bui
 
 ## ✨ Key Features
 
-| Feature | Description |
-| :--- | :--- |
-| 🧹 **Robust ETL Pipeline** | Multi-header CSV parsing, metadata artifact stripping, and type coercion before loading into MySQL on the isolated port `3307`. |
-| 🗄️ **Database Isolation** | All connections are pinned to port `3307` (`weather_db`). Port `3306` (legacy POS) is never referenced anywhere in the codebase. |
-| 🌍 **Geospatial Dashboard** | Interactive PyDeck map with city-level location pins, temperature heatmap overlays, and sidebar city/date range filters. |
-| 📈 **Comparative Analytics** | Cross-city temperature and humidity distribution boxplots, grouped average bars, monthly trend lines, and auto-generated meteorological insight captions. |
-| 🔮 **ML Temperature Forecast** | Autoregressive hourly forecasting using Ridge Regression and Gradient Boosting with multi-step lag features, rolling statistics, and cyclical time encodings. Strictly chronological 80/20 split prevents temporal data leakage. |
-| 🤖 **LLM Agentic Briefing** | Autonomous tool-calling agent (OpenAI / Anthropic / Ollama / offline) that orchestrates safe read-only Python tools — never executes raw SQL — and synthesises structured Markdown reports. |
-| 🧪 **Automated Test Suite** | 11 pytest tests covering temporal non-leakage verification, chronological split integrity, all 5 agent tool assertions, database port isolation security check. |
-| ☁️ **Deployment Ready** | Runs fully offline in CSV mode for Streamlit Community Cloud or any environment without MySQL access. |
-
----
-
+* 🧹 **Robust ETL Pipeline**
+* 🗄️ **Database Isolation**
+* 🌍 **Geospatial Dashboard**
+* 📈 **Comparative Analytics**
+* 🔮 **ML Temperature Forecast**
+* 🤖 **LLM Agentic Briefing**
+* 🧪 **Automated Test Suite**
+* ☁️ **Deployment Ready**
 ## 🏗️ System Architecture
 
 ```mermaid
@@ -100,12 +95,10 @@ flowchart TD
 
 | Tab | Screenshot |
 | :--- | :---: |
-| **📊 Overview & Geospatial Map** | ![Overview](docs/images/overview.png) |
-| **📈 Comparative Analysis** | ![Comparative](docs/images/comparative_analysis.png) |
-| **🔮 ML Temperature Forecast** | ![Forecast](docs/images/forecast.png) |
-| **🤖 AI Weather Briefing** | ![AI Report](docs/images/ai_report.png) |
-
----
+| **📊 Overview & Geospatial Map** | ![Overview](screenshots/overview.png) |
+| **📈 Comparative Analysis** | ![Comparative](screenshots/comparative_analysis.png) |
+| **🔮 ML Temperature Forecast** | ![Forecast](screenshots/forecast.png) |
+| **🤖 AI Weather Briefing** | ![AI Report](screenshots/ai_report.png) |
 
 ## 🛠️ Technology Stack
 
