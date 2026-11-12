@@ -48,7 +48,7 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Paths  (resolve relative to this file so script works from any cwd)
 # ---------------------------------------------------------------------------
-SRC_DIR    = Path(__file__).parent
+SRC_DIR    = Path(__file__).resolve().parent
 ROOT_DIR   = SRC_DIR.parent
 DATA_DIR   = ROOT_DIR / "Data"
 MODELS_DIR = ROOT_DIR / "models"

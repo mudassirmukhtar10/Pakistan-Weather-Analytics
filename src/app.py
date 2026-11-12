@@ -31,7 +31,7 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-APP_DIR    = Path(__file__).parent
+APP_DIR    = Path(__file__).resolve().parent
 ROOT_DIR   = APP_DIR.parent
 MODELS_DIR = ROOT_DIR / "models"
 MODEL_PATH   = MODELS_DIR / "temp_forecaster.joblib"
@@ -243,11 +243,38 @@ def load_history_from_csv() -> pd.DataFrame:
 
 @st.cache_resource
 def load_model():
-    """Load the saved model artifact with st.cache_resource (singleton)."""
+    """
+    Load the saved model artifact with st.cache_resource (singleton).
+    Uses an absolute Path resolved relative to app.py to ensure portability
+    across local machines and Streamlit Community Cloud.
+    """
     import joblib
-    if not MODEL_PATH.exists():
+    
+    # Check primary path (models/temp_forecaster.joblib relative to project root)
+    target_path = MODEL_PATH
+    if not target_path.exists():
+        # Fallback check directly in cwd or relative paths in case of different cloud root
+        fallback_candidates = [
+            Path("models/temp_forecaster.joblib").resolve(),
+            Path(__file__).resolve().parent / "models" / "temp_forecaster.joblib",
+        ]
+        for candidate in fallback_candidates:
+            if candidate.exists():
+                target_path = candidate
+                break
+
+    if not target_path.exists():
+        st.warning(
+            f"No trained model found at `{target_path}`. Run the training script first:\n\n"
+            "```bash\npython src/train_model.py\n```"
+        )
         return None
-    return joblib.load(MODEL_PATH)
+
+    try:
+        return joblib.load(target_path)
+    except Exception as e:
+        st.error(f"Error loading model artifact from `{target_path}`: {e}")
+        return None
 
 
 def load_metrics() -> list:
@@ -695,10 +722,7 @@ with tab_forecast:
     model_artifact = load_model()
 
     if model_artifact is None:
-        st.warning(
-            "No trained model found. Run the training script first:\n\n"
-            "```bash\npython src/train_model.py\n```"
-        )
+        st.stop()
     else:
         # --- Controls ---
         CITY_ORDER = model_artifact.get("city_order", ["Islamabad", "Karachi", "Lahore", "Peshawer"])
