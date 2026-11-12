@@ -36,16 +36,11 @@ ROOT_DIR   = APP_DIR.parent
 MODELS_DIR = ROOT_DIR / "models"
 MODEL_PATH   = MODELS_DIR / "temp_forecaster.joblib"
 METRICS_PATH = MODELS_DIR / "metrics.json"
+DATA_CSV_PATH = ROOT_DIR / "weather_data.csv"
 
 # Add src to path so we can import train_model helpers
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
-
-# ---------------------------------------------------------------------------
-# DB connection — reuse the same URI as analysis.py / train_model.py (port 3307)
-# ---------------------------------------------------------------------------
-DB_URI = "mysql+pymysql://root:@localhost:3307/weather_db"
-engine = create_engine(DB_URI)
 
 # Standard geographical coordinates for Pakistan cities (used for mapping & realignment)
 CITY_COORDINATES = {
@@ -196,13 +191,22 @@ def clean_weather_data(df: pd.DataFrame) -> pd.DataFrame:
 
 @st.cache_data
 def load_data() -> pd.DataFrame:
-    """Load weather data from MySQL (port 3307) and apply robust data cleaning."""
-    query = "SELECT * FROM weather_data"
+    """Load weather data directly from weather_data.csv and apply robust data cleaning."""
     try:
-        raw_df = pd.read_sql(query, con=engine)
-        return clean_weather_data(raw_df)
+        if DATA_CSV_PATH.exists():
+            raw_df = pd.read_csv(DATA_CSV_PATH, low_memory=False)
+            return clean_weather_data(raw_df)
+        
+        # Fallback to cleaned_weather.csv in Data/ directory if root csv is missing
+        backup_csv = ROOT_DIR / "Data" / "cleaned_weather.csv"
+        if backup_csv.exists():
+            raw_df = pd.read_csv(backup_csv, low_memory=False)
+            return clean_weather_data(raw_df)
+
+        st.error(f"Weather dataset not found at {DATA_CSV_PATH}")
+        return pd.DataFrame()
     except Exception as e:
-        st.error(f"Error loading data from database: {e}")
+        st.error(f"Error loading weather data from CSV: {e}")
         return pd.DataFrame()
 
 
